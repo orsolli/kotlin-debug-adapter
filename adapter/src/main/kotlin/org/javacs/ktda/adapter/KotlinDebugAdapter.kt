@@ -93,6 +93,8 @@ class KotlinDebugAdapter(
 		val projectRoot = (args["projectRoot"] as? String)?.let { Paths.get(it) }
 			?: throw missingRequestArgument("launch", "projectRoot")
 
+		val subproject = (args["subproject"] as? String)?.let { Paths.get(args["projectRoot"] + it) } ?: ""
+
 		val mainClass = (args["mainClass"] as? String)
 			?: throw missingRequestArgument("launch", "mainClass")
 
@@ -101,7 +103,7 @@ class KotlinDebugAdapter(
 		setupCommonInitializationParams(args)
 
 		val config = LaunchConfiguration(
-			debugClassPathResolver(listOf(projectRoot)).classpathOrEmpty.map { it.compiledJar }.toSet(),
+			debugClassPathResolver(listOf(projectRoot, subproject)).classpathOrEmpty.map { it.compiledJar }.toSet(),
 			mainClass,
 			projectRoot,
 			vmArguments
